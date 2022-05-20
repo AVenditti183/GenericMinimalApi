@@ -1,15 +1,13 @@
-﻿namespace IntroMinimalApi.Models
+﻿namespace IntroMinimalApi.Models;
+public class Blexiner
 {
-    public class Blexiner
+    public Blexiner()
     {
-        public Blexiner()
-        {
-            Id = new Guid();
-        }
-
-        public Guid Id { get; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string JobTitle { get; set; }
+        Id = Guid.NewGuid();
     }
+
+    public Guid Id { get; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string JobTitle { get; set; }
 }

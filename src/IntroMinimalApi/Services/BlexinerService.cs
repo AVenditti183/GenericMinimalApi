@@ -1,7 +1,4 @@
-﻿using IntroMinimalApi.Interfaces;
-using IntroMinimalApi.Models;
-
-namespace IntroMinimalApi.Services
+﻿namespace IntroMinimalApi.Services
 {
     public class BlexinerService : IEntityService<Blexiner>
     {
@@ -11,25 +8,38 @@ namespace IntroMinimalApi.Services
           new Blexiner { FirstName = "Antonio", LastName = "Liccardi", JobTitle = "CTO" },
           new Blexiner { FirstName = "Antonio", LastName = "Venditti", JobTitle = "Architect" },
           new Blexiner { FirstName = "Francesco", LastName = "De Vicariis", JobTitle = "Architect" },
-          new Blexiner { FirstName = "Marco", LastName = "Savarese", JobTitle = "Architect" },
-          new Blexiner { FirstName = "Adolfo", LastName = "Arnold", JobTitle = "Developer" },
-          new Blexiner { FirstName = "Enrico", LastName = "Bencivenga", JobTitle = "Developer" },
           new Blexiner { FirstName = "Gaetano", LastName = "Paternò", JobTitle = "Architect" },
-          new Blexiner { FirstName = "Genny", LastName = "Paudice", JobTitle = "Developer" },
-          new Blexiner { FirstName = "Anna Maria", LastName = "Serra", JobTitle = "Developer" },
-          new Blexiner { FirstName = "Antonio", LastName = "Tammaro", JobTitle = "Developer" },
-          new Blexiner { FirstName = "Francesco", LastName = "Vastarella", JobTitle = "Developer" },
-          new Blexiner { FirstName = "Gerardo", LastName = "Greco", JobTitle = "Developer" }
+          new Blexiner { FirstName = "Marco", LastName = "Savarese", JobTitle = "Architect" },
+          new Blexiner { FirstName = "Adolfo", LastName = "Arnold", JobTitle = "Senior Developer" },
+          new Blexiner { FirstName = "Enrico", LastName = "Bencivenga", JobTitle = "Senior Developer" },
+          new Blexiner { FirstName = "Genny", LastName = "Paudice", JobTitle = "Senior Developer" },
+          new Blexiner { FirstName = "Anna Maria", LastName = "Serra", JobTitle = "Senior Developer" },
+          new Blexiner { FirstName = "Antonio", LastName = "Tammaro", JobTitle = "Senior Developer" },
+          new Blexiner { FirstName = "Francesco", LastName = "Vastarella", JobTitle = "Senior Developer" },
+          new Blexiner { FirstName = "Gerardo", LastName = "Greco", JobTitle = "Senior Developer" }
         };
 
         public IEnumerable<Blexiner> GetList(string searchText)
         {
-            return _blexiners.Where(b => b.FirstName.Contains(searchText) || b.LastName.Contains(searchText)).ToArray();
+            var blexiners = _blexiners;
+            if (!string.IsNullOrWhiteSpace(searchText)) 
+            {
+                blexiners = blexiners.Where( b => 
+                    b.FirstName.ToLower().Contains(searchText.ToLower()) || 
+                    b.LastName.ToLower().Contains(searchText.ToLower())
+                ).ToList();
+            }
+            return blexiners;
         }
 
         public Blexiner Get(Guid id)
         {
-            return _blexiners.SingleOrDefault(b => b.Id == id);
+            var blexiner = _blexiners.SingleOrDefault(b => b.Id == id);
+            if(blexiner == null)
+            {
+                throw new KeyNotFoundException();
+            }
+            return blexiner;
         }
 
         public Guid Add(Blexiner blexiner)
@@ -40,14 +50,24 @@ namespace IntroMinimalApi.Services
 
         public void Update(Guid id, Blexiner updatedBlexiner)
         {
-            var blexiner = _blexiners.SingleOrDefault(b => b.Id == id);           
-            if(blexiner != null) blexiner = updatedBlexiner;
+            var blexiner = _blexiners.SingleOrDefault(b => b.Id == id);
+            if (blexiner == null)
+            {
+                throw new KeyNotFoundException();
+            }
+            blexiner.FirstName = updatedBlexiner.FirstName;
+            blexiner.LastName = updatedBlexiner.LastName;
+            blexiner.JobTitle = updatedBlexiner.JobTitle;
         }
 
         public void Delete(Guid id)
         {
-            var blexiner = _blexiners.SingleOrDefault(b => b.Id == id);           
-            if (blexiner != null) _blexiners.Remove(blexiner);
+            var blexiner = _blexiners.SingleOrDefault(b => b.Id == id);
+            if (blexiner == null)
+            {
+                throw new KeyNotFoundException();
+            }
+            _blexiners.Remove(blexiner);
         }
     }
 }
