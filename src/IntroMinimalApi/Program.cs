@@ -13,5 +13,6 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/helloworld", () => "Hello world!");
+app.MapGet("/hellowo", () => Results.Ok(new { traceLevel = 0, errorDesc = "", command =  });
+app.MapPost("/h")
 app.Run();
