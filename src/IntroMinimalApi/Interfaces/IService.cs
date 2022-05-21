@@ -1,5 +1,5 @@
 ﻿namespace IntroMinimalApi.Interfaces;
-public interface ICrudService<TModel>
+public interface IService<TModel>
 {
     public IEnumerable<TModel> GetList(string searchText);
     public TModel Get(Guid id);

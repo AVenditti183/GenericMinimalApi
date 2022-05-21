@@ -3,7 +3,7 @@ using Entities = IntroMinimalApi.Data.Entities;
 
 namespace IntroMinimalApi.Services
 {
-    public class BlexinerService : ICrudService<Blexiner>
+    public class BlexinerService : IService<Blexiner>
     {
         private readonly DataStorage _dataStorage;
 
