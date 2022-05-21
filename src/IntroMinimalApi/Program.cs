@@ -12,7 +12,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/blexiners", (IService<Blexiner> service, string searchText) => Results.Ok(service.GetList(searchText)))
+app.MapGet("/blexiners", (IService<Blexiner> service, GetListParameters parameters) => Results.Ok(service.GetList(parameters)))
 .WithName("GetBlexiners")
 .Produces(StatusCodes.Status200OK, typeof(IEnumerable<Blexiner>));
 

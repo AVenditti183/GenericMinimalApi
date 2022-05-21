@@ -12,16 +12,41 @@ namespace IntroMinimalApi.Services
             _dataStorage = dataStorage;
         }
         
-        public IEnumerable<Blexiner> GetList(string searchText)
+        public IEnumerable<Blexiner> GetList(GetListParameters parameters)
         {
             IEnumerable<Entities.Blexiner> dsBlexiners = _dataStorage.Blexiners;
-            if (!string.IsNullOrWhiteSpace(searchText)) 
+            if (!string.IsNullOrWhiteSpace(parameters.SearchText)) 
             {
                 dsBlexiners = dsBlexiners.Where(b =>
-                   b.FirstName.ToLower().Contains(searchText.ToLower()) ||
-                   b.LastName.ToLower().Contains(searchText.ToLower())
+                   b.FirstName.ToLower().Contains(parameters.SearchText.ToLower()) ||
+                   b.LastName.ToLower().Contains(parameters.SearchText.ToLower())
                 );
             }
+
+            if (!string.IsNullOrWhiteSpace(parameters.OrderBy))
+            {
+                switch (parameters.OrderBy)
+                {
+                    case "firstname-asc":
+                        dsBlexiners = dsBlexiners.OrderBy(c => c.FirstName);
+                        break;
+                    case "firstname-desc":
+                        dsBlexiners = dsBlexiners.OrderByDescending(c => c.FirstName);
+                        break;
+                    case "lastname-asc":
+                        dsBlexiners = dsBlexiners.OrderBy(c => c.LastName);
+                        break;
+                    case "lastname-desc":
+                        dsBlexiners = dsBlexiners.OrderByDescending(c => c.LastName);
+                        break;
+                }
+            }
+
+            if (parameters.PageSize > 0)
+            {
+                dsBlexiners = dsBlexiners.Skip(parameters.PageNumber * parameters.PageSize).Take(parameters.PageSize);
+            }
+
             return dsBlexiners.Select(b => b.ToModel());
         }
 
