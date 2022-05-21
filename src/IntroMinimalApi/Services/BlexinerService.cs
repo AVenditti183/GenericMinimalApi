@@ -1,73 +1,67 @@
-﻿namespace IntroMinimalApi.Services
-{
-    public class BlexinerService : IEntityService<Blexiner>
-    {
-        private List<Blexiner> _blexiners = new List<Blexiner>
-        {
-          new Blexiner { FirstName = "Michele", LastName = "Aponte", JobTitle = "CEO" },
-          new Blexiner { FirstName = "Antonio", LastName = "Liccardi", JobTitle = "CTO" },
-          new Blexiner { FirstName = "Antonio", LastName = "Venditti", JobTitle = "Architect" },
-          new Blexiner { FirstName = "Francesco", LastName = "De Vicariis", JobTitle = "Architect" },
-          new Blexiner { FirstName = "Gaetano", LastName = "Paternò", JobTitle = "Architect" },
-          new Blexiner { FirstName = "Marco", LastName = "Savarese", JobTitle = "Architect" },
-          new Blexiner { FirstName = "Adolfo", LastName = "Arnold", JobTitle = "Senior Developer" },
-          new Blexiner { FirstName = "Enrico", LastName = "Bencivenga", JobTitle = "Senior Developer" },
-          new Blexiner { FirstName = "Genny", LastName = "Paudice", JobTitle = "Senior Developer" },
-          new Blexiner { FirstName = "Anna Maria", LastName = "Serra", JobTitle = "Senior Developer" },
-          new Blexiner { FirstName = "Antonio", LastName = "Tammaro", JobTitle = "Senior Developer" },
-          new Blexiner { FirstName = "Francesco", LastName = "Vastarella", JobTitle = "Senior Developer" },
-          new Blexiner { FirstName = "Gerardo", LastName = "Greco", JobTitle = "Senior Developer" }
-        };
+﻿using IntroMinimalApi.Models;
+using Entities = IntroMinimalApi.Data.Entities;
 
+namespace IntroMinimalApi.Services
+{
+    public class BlexinerService : ICrudService<Blexiner>
+    {
+        private readonly DataStorage _dataStorage;
+
+        public BlexinerService(DataStorage dataStorage)
+        {
+            _dataStorage = dataStorage;
+        }
+        
         public IEnumerable<Blexiner> GetList(string searchText)
         {
-            var blexiners = _blexiners;
+            IEnumerable<Entities.Blexiner> dsBlexiners = _dataStorage.Blexiners;
             if (!string.IsNullOrWhiteSpace(searchText)) 
             {
-                blexiners = blexiners.Where( b => 
-                    b.FirstName.ToLower().Contains(searchText.ToLower()) || 
-                    b.LastName.ToLower().Contains(searchText.ToLower())
-                ).ToList();
+                dsBlexiners = dsBlexiners.Where(b =>
+                   b.FirstName.ToLower().Contains(searchText.ToLower()) ||
+                   b.LastName.ToLower().Contains(searchText.ToLower())
+                );
             }
-            return blexiners;
+            return dsBlexiners.Select(b => b.ToModel());
         }
 
         public Blexiner Get(Guid id)
         {
-            var blexiner = _blexiners.SingleOrDefault(b => b.Id == id);
-            if(blexiner == null)
+            var dsBlexiner = _dataStorage.Blexiners.SingleOrDefault(b => b.Id == id);
+            if(dsBlexiner == null)
             {
                 throw new KeyNotFoundException();
             }
-            return blexiner;
+            return dsBlexiner.ToModel();
         }
 
-        public Guid Add(Blexiner blexiner)
+        public Blexiner Add(Blexiner blexiner)
         {
-            _blexiners.Add(blexiner);
-            return blexiner.Id;
+            var dsBlexiner = blexiner.ToEntity();
+            _dataStorage.Blexiners.Add(dsBlexiner);
+            return dsBlexiner.ToModel();
         }
 
-        public void Update(Guid id, Blexiner updatedBlexiner)
+        public void Update(Guid id, Blexiner blexiner)
         {
-            var blexiner = _blexiners.SingleOrDefault(b => b.Id == id);
-            if (blexiner == null)
+            var dsBlexiner = _dataStorage.Blexiners.SingleOrDefault(b => b.Id == id);
+            if (dsBlexiner == null)
             {
                 throw new KeyNotFoundException();
             }
-            blexiner.FirstName = updatedBlexiner.FirstName;
-            blexiner.LastName = updatedBlexiner.LastName;
-            blexiner.JobTitle = updatedBlexiner.JobTitle;
+            dsBlexiner.FirstName = blexiner.FirstName;
+            dsBlexiner.LastName = blexiner.LastName;
+            dsBlexiner.JobTitle = blexiner.JobTitle;
         }
 
         public void Delete(Guid id)
         {
-            var blexiner = _blexiners.SingleOrDefault(b => b.Id == id);
-            if (blexiner == null)
+            var dsBlexiner = _dataStorage.Blexiners.SingleOrDefault(b => b.Id == id);
+            if (dsBlexiner == null)
             {
                 throw new KeyNotFoundException();
             }
-            _blexiners.Remove(blexiner);
+            _dataStorage.Blexiners.Remove(dsBlexiner);
         }
     }
 }

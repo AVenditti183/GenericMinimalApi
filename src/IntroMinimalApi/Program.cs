@@ -1,23 +1,26 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using IntroMinimalApi.Models;
+
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<IEntityService<Blexiner>, BlexinerService>();
+builder.Services.AddSingleton<DataStorage>();
+builder.Services.AddScoped<ICrudService<Blexiner>, BlexinerService>();
 
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/blexiners", (IEntityService<Blexiner> blexinerService, string searchText) => Results.Ok(blexinerService.GetList(searchText)))
+app.MapGet("/blexiners", (ICrudService<Blexiner> service, string searchText) => Results.Ok(service.GetList(searchText)))
 .WithName("GetBlexiners")
 .Produces(StatusCodes.Status200OK, typeof(IEnumerable<Blexiner>));
 
-app.MapGet("/blexiners/{id}", (IEntityService<Blexiner> blexinerService, Guid id) =>
+app.MapGet("/blexiners/{id}", (ICrudService<Blexiner> service, Guid id) =>
 {
     try
     {
-        return Results.Ok(blexinerService.Get(id));
+        return Results.Ok(service.Get(id));
     }
     catch (KeyNotFoundException)
     {
@@ -28,19 +31,19 @@ app.MapGet("/blexiners/{id}", (IEntityService<Blexiner> blexinerService, Guid id
 .Produces(StatusCodes.Status200OK, typeof(Blexiner))
 .Produces(StatusCodes.Status404NotFound);
 
-app.MapPost("/blexiners", (IEntityService<Blexiner> blexinerService, Blexiner blexiner) =>
+app.MapPost("/blexiners", (ICrudService<Blexiner> service, Blexiner blexiner) =>
 {
-    blexinerService.Add(blexiner);
-    return Results.CreatedAtRoute("GetBlexiner", new { blexiner.Id }, blexiner.Id);
+    var newBlexiner = service.Add(blexiner);
+    return Results.CreatedAtRoute("GetBlexiner", new { newBlexiner.Id }, newBlexiner);
 })
 .WithName("PostBlexiner")
 .Produces(StatusCodes.Status201Created, typeof(Guid));
 
-app.MapPut("blexiners/{id:guid}", (IEntityService<Blexiner> blexinerService, Guid id, Blexiner blexiner) =>
+app.MapPut("blexiners/{id:guid}", (ICrudService<Blexiner> service, Guid id, Blexiner item) =>
 {
     try
     {
-        blexinerService.Update(id, blexiner);
+        service.Update(id, item);
         return Results.NoContent();
     }
     catch (KeyNotFoundException)
@@ -52,11 +55,11 @@ app.MapPut("blexiners/{id:guid}", (IEntityService<Blexiner> blexinerService, Gui
 .Produces(StatusCodes.Status204NoContent)
 .Produces(StatusCodes.Status404NotFound);
 
-app.MapDelete("", (IEntityService<Blexiner> blexinerService, Guid id) =>
+app.MapDelete("blexiners/{id:guid}", (ICrudService<Blexiner> service, Guid id) =>
 {
     try
     {
-        blexinerService.Delete(id);
+        service.Delete(id);
         return Results.NoContent();
     }
     catch (KeyNotFoundException)
