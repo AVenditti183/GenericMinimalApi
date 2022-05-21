@@ -1,14 +1,14 @@
 ﻿using IntroMinimalApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DataStorage>();
 builder.Services.AddScoped<IService<Blexiner>, BlexinerService>();
+builder.Services.AddScoped<IValidator<Blexiner>, BlexinerValidator>();
+//builder.Services.AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Program>());
 
 var app = builder.Build();
-
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -31,19 +31,37 @@ app.MapGet("/blexiners/{id}", (IService<Blexiner> service, Guid id) =>
 .Produces(StatusCodes.Status200OK, typeof(Blexiner))
 .Produces(StatusCodes.Status404NotFound);
 
-app.MapPost("/blexiners", (IService<Blexiner> service, Blexiner blexiner) =>
+app.MapPost("/blexiners", (IService<Blexiner> service, IValidator<Blexiner> validator, Blexiner blexiner) =>
 {
+    var validationResult = validator.Validate(blexiner);
+    if (!validationResult.IsValid)
+    {
+        var errors = validationResult.Errors.GroupBy(e => e.PropertyName)
+            .ToDictionary(k => k.Key, v => v.Select(e => e.ErrorMessage).ToArray());
+
+        return Results.ValidationProblem(errors);
+    }
+
     var newBlexiner = service.Add(blexiner);
     return Results.CreatedAtRoute("GetBlexiner", new { newBlexiner.Id }, newBlexiner);
 })
 .WithName("PostBlexiner")
 .Produces(StatusCodes.Status201Created, typeof(Guid));
 
-app.MapPut("blexiners/{id:guid}", (IService<Blexiner> service, Guid id, Blexiner item) =>
+app.MapPut("blexiners/{id:guid}", (IService<Blexiner> service, IValidator<Blexiner> validator, Guid id, Blexiner blexiner) =>
 {
+    var validationResult = validator.Validate(blexiner);
+    if (!validationResult.IsValid)
+    {
+        var errors = validationResult.Errors.GroupBy(e => e.PropertyName)
+            .ToDictionary(k => k.Key, v => v.Select(e => e.ErrorMessage).ToArray());
+
+        return Results.ValidationProblem(errors);
+    }
+
     try
     {
-        service.Update(id, item);
+        service.Update(id, blexiner);
         return Results.NoContent();
     }
     catch (KeyNotFoundException)
