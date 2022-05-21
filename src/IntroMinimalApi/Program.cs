@@ -43,7 +43,8 @@ app.MapPost("/blexiners", (IService<Blexiner> service, Blexiner blexiner) =>
     return Results.CreatedAtRoute("GetBlexiner", new { newBlexiner.Id }, newBlexiner);
 })
 .WithName("PostBlexiner")
-.Produces(StatusCodes.Status201Created, typeof(Guid));
+.Produces(StatusCodes.Status201Created, typeof(Guid))
+.ProducesValidationProblem();
 
 app.MapPut("blexiners/{id:guid}", (IService<Blexiner> service, Guid id, Blexiner blexiner) =>
 {
@@ -64,7 +65,8 @@ app.MapPut("blexiners/{id:guid}", (IService<Blexiner> service, Guid id, Blexiner
 })
 .WithName("PutBlexiner")
 .Produces(StatusCodes.Status204NoContent)
-.Produces(StatusCodes.Status404NotFound);
+.Produces(StatusCodes.Status404NotFound)
+.ProducesValidationProblem();
 
 app.MapDelete("blexiners/{id:guid}", (IService<Blexiner> service, Guid id) =>
 {
