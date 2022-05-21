@@ -39,11 +39,11 @@ app.MapPost("/blexiners", (IService<Blexiner> service, Blexiner blexiner) =>
 .WithName("PostBlexiner")
 .Produces(StatusCodes.Status201Created, typeof(Guid));
 
-app.MapPut("blexiners/{id:guid}", (IService<Blexiner> service, Guid id, Blexiner item) =>
+app.MapPut("blexiners/{id:guid}", (IService<Blexiner> service, Guid id, Blexiner blexiner) =>
 {
     try
     {
-        service.Update(id, item);
+        service.Update(id, blexiner);
         return Results.NoContent();
     }
     catch (KeyNotFoundException)
