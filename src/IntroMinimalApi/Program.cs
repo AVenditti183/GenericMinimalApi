@@ -1,4 +1,5 @@
 ﻿using IntroMinimalApi.Models;
+using MiniValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,11 @@ app.MapGet("/blexiners/{id}", (IService<Blexiner> service, Guid id) =>
 
 app.MapPost("/blexiners", (IService<Blexiner> service, Blexiner blexiner) =>
 {
+    if (!MiniValidator.TryValidate(blexiner, out var errors))
+    {
+        return Results.ValidationProblem(errors);
+    }
+
     var newBlexiner = service.Add(blexiner);
     return Results.CreatedAtRoute("GetBlexiner", new { newBlexiner.Id }, newBlexiner);
 })
@@ -41,6 +47,11 @@ app.MapPost("/blexiners", (IService<Blexiner> service, Blexiner blexiner) =>
 
 app.MapPut("blexiners/{id:guid}", (IService<Blexiner> service, Guid id, Blexiner blexiner) =>
 {
+    if (!MiniValidator.TryValidate(blexiner, out var errors))
+    {
+        return Results.ValidationProblem(errors);
+    }
+
     try
     {
         service.Update(id, blexiner);
