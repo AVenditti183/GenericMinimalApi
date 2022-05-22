@@ -7,36 +7,42 @@ namespace IntroMinimalApi.Binding
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            if (operation.Parameters == null) operation.Parameters = new List<OpenApiParameter>();
+            var routeNameMetadata = (IRouteNameMetadata) context.ApiDescription.ActionDescriptor.EndpointMetadata.SingleOrDefault(m => m is IRouteNameMetadata);
 
-            var descriptor = context.ApiDescription.ActionDescriptor;
+            if (routeNameMetadata != null && 
+                routeNameMetadata.RouteName.StartsWith("Get") && 
+                routeNameMetadata.RouteName.EndsWith("List"))
+            {
+                if (operation.Parameters == null)
+                { 
+                    operation.Parameters = new List<OpenApiParameter>();
+                }
 
-            //if (descripto
-            //{
-            //    operation.Parameters.Add(new OpenApiParameter()
-            //    {
-            //        Name = "timestamp",
-            //        In = ParameterLocation.Query,
-            //        Description = "The timestamp of now",
-            //        Required = true
-            //    });
-
-            //    operation.Parameters.Add(new OpenApiParameter()
-            //    {
-            //        Name = "nonce",
-            //        In = ParameterLocation.Query,
-            //        Description = "The random value",
-            //        Required = true
-            //    });
-
-            //    operation.Parameters.Add(new OpenApiParameter()
-            //    {
-            //        Name = "sign",
-            //        In = ParameterLocation.Query,
-            //        Description = "The signature",
-            //        Required = true
-            //    });
-            //}
+                operation.Parameters.Add(new OpenApiParameter()
+                {
+                    Name = "searchtext",
+                    In = ParameterLocation.Query,
+                    Required = false
+                });
+                operation.Parameters.Add(new OpenApiParameter()
+                {
+                    Name = "pagenumber",
+                    In = ParameterLocation.Query,
+                    Required = false
+                });
+                operation.Parameters.Add(new OpenApiParameter()
+                {
+                    Name = "pagesize",
+                    In = ParameterLocation.Query,
+                    Required = false
+                });
+                operation.Parameters.Add(new OpenApiParameter()
+                {
+                    Name = "orderby",
+                    In = ParameterLocation.Query,
+                    Required = false
+                });
+            }
         }
     }
 }

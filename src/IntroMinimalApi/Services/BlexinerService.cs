@@ -44,7 +44,7 @@ namespace IntroMinimalApi.Services
 
             if (parameters.PageSize > 0)
             {
-                dsBlexiners = dsBlexiners.Skip(parameters.PageNumber * parameters.PageSize).Take(parameters.PageSize);
+                dsBlexiners = dsBlexiners.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize);
             }
 
             return dsBlexiners.Select(b => b.ToModel());
