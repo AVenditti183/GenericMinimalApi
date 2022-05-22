@@ -88,5 +88,38 @@ namespace IntroMinimalApi.Services
             }
             _dataStorage.Blexiners.Remove(dsBlexiner);
         }
+
+        public byte[] GetPhoto(Guid id)
+        {
+            var dsBlexiner = _dataStorage.Blexiners.SingleOrDefault(b => b.Id == id);
+            if (dsBlexiner?.Photo == null)
+            {
+                throw new FileNotFoundException();
+            }
+            return dsBlexiner.Photo;
+        }
+
+        public void AddPhoto(Guid id, FormFileContent photo)
+        {
+            var dsBlexiner = _dataStorage.Blexiners.SingleOrDefault(b => b.Id == id);
+            if (dsBlexiner == null)
+            {
+                throw new KeyNotFoundException();
+            }
+            using var stream = photo.Content.OpenReadStream();
+            using var photoStream = new MemoryStream();
+            stream.CopyTo(photoStream);
+            dsBlexiner.Photo = photoStream.ToArray();
+        }
+
+        public void DeletePhoto(Guid id)
+        {
+            var dsBlexiner = _dataStorage.Blexiners.SingleOrDefault(b => b.Id == id);
+            if (dsBlexiner?.Photo == null)
+            {
+                throw new FileNotFoundException();
+            }
+            dsBlexiner.Photo = null;
+        }
     }
 }
