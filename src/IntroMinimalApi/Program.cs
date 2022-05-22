@@ -6,6 +6,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.OperationFilter<FormFileOperationFilter>();
+    options.OperationFilter<GetListOperationFilter>();
 });
 builder.Services.AddSingleton<DataStorage>();
 builder.Services.AddScoped<IService<Blexiner>, BlexinerService>();
