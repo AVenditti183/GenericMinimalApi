@@ -46,7 +46,7 @@ app.MapPost("/blexiners", (IService<Blexiner> service, IValidator<Blexiner> vali
     return Results.CreatedAtRoute("GetBlexiner", new { newBlexiner.Id }, newBlexiner);
 })
 .WithName("PostBlexiner")
-.Produces(StatusCodes.Status201Created, typeof(Guid))
+.Produces(StatusCodes.Status201Created, typeof(Blexiner))
 .ProducesValidationProblem();
 
 app.MapPut("blexiners/{id:guid}", (IService<Blexiner> service, IValidator<Blexiner> validator, Guid id, Blexiner blexiner) =>
