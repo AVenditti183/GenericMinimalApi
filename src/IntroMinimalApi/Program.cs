@@ -37,7 +37,7 @@ app.MapPost("/blexiners", (IService<Blexiner> service, Blexiner blexiner) =>
     return Results.CreatedAtRoute("GetBlexiner", new { newBlexiner.Id }, newBlexiner);
 })
 .WithName("PostBlexiner")
-.Produces(StatusCodes.Status201Created, typeof(Guid));
+.Produces(StatusCodes.Status201Created, typeof(Blexiner));
 
 app.MapPut("blexiners/{id:guid}", (IService<Blexiner> service, Guid id, Blexiner blexiner) =>
 {
