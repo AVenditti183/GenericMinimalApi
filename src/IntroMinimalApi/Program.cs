@@ -12,6 +12,6 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapEndpoints();
+new BlexinerHandler().MapEndpoints(app);
 
 app.Run();

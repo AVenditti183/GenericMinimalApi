@@ -2,7 +2,7 @@
 
 namespace IntroMinimalApi.Handlers
 {
-    public class BlexinerHandler : IEndpointHandler
+    public class BlexinerHandler
     {
         public void MapEndpoints(IEndpointRouteBuilder app)
         {
