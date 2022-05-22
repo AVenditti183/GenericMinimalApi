@@ -12,11 +12,42 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/blexiners", (IService<Blexiner> service, string searchText) => Results.Ok(service.GetList(searchText)))
-.WithName("GetBlexiners")
-.Produces(StatusCodes.Status200OK, typeof(IEnumerable<Blexiner>));
+MapEndpoints();
 
-app.MapGet("/blexiners/{id}", (IService<Blexiner> service, Guid id) =>
+app.Run();
+
+void MapEndpoints()
+{
+    app.MapGet("/blexiners", GetBlexiners)
+    .WithName("GetBlexiners")
+    .Produces(StatusCodes.Status200OK, typeof(IEnumerable<Blexiner>));
+
+    app.MapGet("/blexiners/{id}", GetBlexiner)
+    .WithName("GetBlexiner")
+    .Produces(StatusCodes.Status200OK, typeof(Blexiner))
+    .Produces(StatusCodes.Status404NotFound);
+
+    app.MapPost("/blexiners", PostBlexiner)
+    .WithName("PostBlexiner")
+    .Produces(StatusCodes.Status201Created, typeof(Blexiner));
+
+    app.MapPut("blexiners/{id:guid}", PutBlexiner)
+    .WithName("PutBlexiner")
+    .Produces(StatusCodes.Status204NoContent)
+    .Produces(StatusCodes.Status404NotFound);
+
+    app.MapDelete("blexiners/{id:guid}", DeleteBlexiner)
+    .WithName("DeleteBlexiner")
+    .Produces(StatusCodes.Status204NoContent)
+    .Produces(StatusCodes.Status404NotFound);
+}
+
+IResult GetBlexiners(IService<Blexiner> service, string searchText)
+{
+    return Results.Ok(service.GetList(searchText));
+}
+
+IResult GetBlexiner(IService<Blexiner> service, Guid id)
 {
     try
     {
@@ -26,20 +57,15 @@ app.MapGet("/blexiners/{id}", (IService<Blexiner> service, Guid id) =>
     {
         return Results.NotFound();
     }
-})
-.WithName("GetBlexiner")
-.Produces(StatusCodes.Status200OK, typeof(Blexiner))
-.Produces(StatusCodes.Status404NotFound);
+}
 
-app.MapPost("/blexiners", (IService<Blexiner> service, Blexiner blexiner) =>
+IResult PostBlexiner(IService<Blexiner> service, Blexiner blexiner)
 {
     var newBlexiner = service.Add(blexiner);
     return Results.CreatedAtRoute("GetBlexiner", new { newBlexiner.Id }, newBlexiner);
-})
-.WithName("PostBlexiner")
-.Produces(StatusCodes.Status201Created, typeof(Blexiner));
+}
 
-app.MapPut("blexiners/{id:guid}", (IService<Blexiner> service, Guid id, Blexiner blexiner) =>
+IResult PutBlexiner(IService<Blexiner> service, Guid id, Blexiner blexiner)
 {
     try
     {
@@ -50,12 +76,9 @@ app.MapPut("blexiners/{id:guid}", (IService<Blexiner> service, Guid id, Blexiner
     {
         return Results.NotFound();
     }
-})
-.WithName("PutBlexiner")
-.Produces(StatusCodes.Status204NoContent)
-.Produces(StatusCodes.Status404NotFound);
+}
 
-app.MapDelete("blexiners/{id:guid}", (IService<Blexiner> service, Guid id) =>
+IResult DeleteBlexiner(IService<Blexiner> service, Guid id)
 {
     try
     {
@@ -66,9 +89,4 @@ app.MapDelete("blexiners/{id:guid}", (IService<Blexiner> service, Guid id) =>
     {
         return Results.NotFound();
     }
-})
-.WithName("DeleteBlexiner")
-.Produces(StatusCodes.Status204NoContent)
-.Produces(StatusCodes.Status404NotFound);
-
-app.Run();
+}
