@@ -14,7 +14,7 @@ namespace IntroMinimalApi.Data
                 new Blexiner { FirstName = "Antonio", LastName = "Liccardi", JobTitle = "CTO" },
                 new Blexiner { FirstName = "Antonio", LastName = "Venditti", JobTitle = "Architect" },
                 new Blexiner { FirstName = "Francesco", LastName = "De Vicariis", JobTitle = "Architect" },
-                new Blexiner { FirstName = "Gaetano", LastName = "Paternò", JobTitle = "Architect" },
+                new Blexiner { FirstName = "Gaetano", LastName = "Paternò", JobTitle = "Senior Develper" },
                 new Blexiner { FirstName = "Marco", LastName = "Savarese", JobTitle = "Architect" },
                 new Blexiner { FirstName = "Adolfo", LastName = "Arnold", JobTitle = "Senior Developer" },
                 new Blexiner { FirstName = "Enrico", LastName = "Bencivenga", JobTitle = "Senior Developer" },
