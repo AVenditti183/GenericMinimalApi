@@ -23,7 +23,7 @@ namespace GenericMinimalApi.Repository
         public Task Create(Book item)
         {
             var lastId = books.Max( s => s.Id);
-            item.Id = lastId + 1;
+            item.Id = lastId +1;
             books.Add(item);
             return Task.CompletedTask;
         }
@@ -37,7 +37,7 @@ namespace GenericMinimalApi.Repository
             return Task.CompletedTask;
         }
 
-        public Task<Book> Get(int key)
+        public Task<Book?> Get(int key)
         {
             return Task.FromResult( books.FirstOrDefault(x => x.Id == key));
         }

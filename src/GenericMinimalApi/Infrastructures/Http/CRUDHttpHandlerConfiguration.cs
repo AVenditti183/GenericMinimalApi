@@ -5,9 +5,9 @@ namespace GenericMinimalApi.Infrastructures.Http
     public class CRUDHttpHandlerConfiguration<TEntity>
     {
         public string? Entity { get; set; }
-        public bool EnableList { get; set; }= true;
+        public bool EnableList { get; set; } = true;
         public bool EnableGetById { get; set; } = true;
-        public bool EnablePost { get; set; }= true;
+        public bool EnablePost { get; set; } = true;
         public bool EnablePut { get; set; } = true;
         public bool EnableDelete { get; set; } = true;
         public bool RequiredAutorize { get; set; } = false;

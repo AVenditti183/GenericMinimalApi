@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace GenericMinimalApi.Infrastructures.Http
 {
@@ -19,7 +17,7 @@ namespace GenericMinimalApi.Infrastructures.Http
             Entity = string.IsNullOrEmpty(entity) ? typeof(TEntity).Name : entity;
         }
 
-        public virtual RouteHandlerBuilder Get(IEndpointRouteBuilder app)
+        public RouteHandlerBuilder Get(IEndpointRouteBuilder app)
             => app.MapGet($"/api/{Entity}/{{id}}",
                     async (
                             TKey id,
@@ -36,7 +34,7 @@ namespace GenericMinimalApi.Infrastructures.Http
                 .Produces<TGetItem>()
                 .WithGroupName(Entity);
 
-        public virtual RouteHandlerBuilder Search(IEndpointRouteBuilder app, Func<string, Expression<Func<TEntity, bool>>> textFilterFunc)
+        public RouteHandlerBuilder Search(IEndpointRouteBuilder app, Func<string, Expression<Func<TEntity, bool>>> textFilterFunc)
         => app.MapGet($"/api/{Entity}",
                 async (
                     string? textFilter,
@@ -52,7 +50,7 @@ namespace GenericMinimalApi.Infrastructures.Http
             .Produces<Page<TListItem>>()
             .WithGroupName(Entity);
 
-        public virtual RouteHandlerBuilder Post(IEndpointRouteBuilder app)
+        public RouteHandlerBuilder Post(IEndpointRouteBuilder app)
         => app.MapPost($"/api/{Entity}",
                 async (
                     TPostITem item,
@@ -78,7 +76,7 @@ namespace GenericMinimalApi.Infrastructures.Http
             .Accepts<TPostITem>("application/json")
             .WithGroupName(Entity);
 
-        public virtual RouteHandlerBuilder Put(IEndpointRouteBuilder app)
+        public RouteHandlerBuilder Put(IEndpointRouteBuilder app)
         => app.MapPut($"/api/{Entity}/{{id}}",
                 async (
                     TKey id,
@@ -110,7 +108,7 @@ namespace GenericMinimalApi.Infrastructures.Http
             .Accepts<TPutItem>("application/json")
             .WithGroupName(Entity);
 
-        public virtual RouteHandlerBuilder Delete(IEndpointRouteBuilder app)
+        public RouteHandlerBuilder Delete(IEndpointRouteBuilder app)
         => app.MapDelete($"/api/{Entity}/{{id}}",
                 async (
                     TKey id,

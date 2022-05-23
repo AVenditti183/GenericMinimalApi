@@ -41,7 +41,7 @@ builder.Services.AddAutoMapper(o => o.AddProfile(new MappingProfiles()));
 
 var app = builder.Build();
 app.UseSwagger();
-app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Generic Minimal Api"); });
+app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();

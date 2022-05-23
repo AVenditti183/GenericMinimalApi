@@ -13,7 +13,7 @@
             configure?.Invoke(configuration);
 
             var handler = new CRUDHttpHandler<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem>(configuration.Entity);
-
+            
             AddRoute(
                 () => handler.Search(app, configuration.TextFilterFunc),
                 enableCheck: configuration.EnableList,

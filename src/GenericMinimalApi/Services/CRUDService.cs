@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using GenericMinimalApi.Infrastructures;
-using GenericMinimalApi.Models;
 using System.Linq.Expressions;
 using System.Security.Claims;
 
@@ -19,18 +18,18 @@ namespace GenericMinimalApi.Services
 
         public CRUDService(IRepository<TEntity,TKey> repository,IMapper mapper)
         {
-            this.repository=repository;
-            this.mapper=mapper;
+            this.repository = repository;
+            this.mapper = mapper;
         }
 
-        public async Task<TGetItem> Get(TKey key, ClaimsPrincipal user)
+        public virtual async Task<TGetItem?> Get(TKey key, ClaimsPrincipal user)
         {
             var entity= await repository.Get(key);
 
             return mapper.Map<TGetItem>(entity);
         }
 
-        public async Task Create(TPostITem item, ClaimsPrincipal user)
+        public virtual async Task Create(TPostITem item, ClaimsPrincipal user)
         {
             var entity = mapper.Map<TEntity>(item);
 
@@ -38,7 +37,7 @@ namespace GenericMinimalApi.Services
         }
 
 
-        public Task Delete(TKey key, ClaimsPrincipal user)
+        public virtual Task Delete(TKey key, ClaimsPrincipal user)
             => repository.Delete(key);
 
         
@@ -53,7 +52,7 @@ namespace GenericMinimalApi.Services
         protected virtual Expression<Func<TEntity, bool>>? Filter(string? textFilter)
             => null;
 
-        public async Task<Page<TListItem>> Search(SearchParameters parameters, Func<string, Expression<Func<TEntity, bool>>> textFilterFunc, ClaimsPrincipal user)
+        public virtual async Task<Page<TListItem>> Search(SearchParameters parameters, Func<string, Expression<Func<TEntity, bool>>> textFilterFunc, ClaimsPrincipal user)
         {
             var entities = await repository.GetAll();
 
