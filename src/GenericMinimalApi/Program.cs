@@ -1,15 +1,14 @@
 
 using GenericMinimalApi.Data;
+using GenericMinimalApi.Http;
 using GenericMinimalApi.Infrastructures;
+using GenericMinimalApi.Mapping;
 using GenericMinimalApi.Repository;
 using GenericMinimalApi.Services;
-using GenericMinimalApi.Http;
-using GenericMinimalApi.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -57,9 +56,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-//app.MapGet("/", () => "Hello World!");
+#region MinimalAPi
 
-//app.MapBook();
+app.MapBook();
+
+#endregion
 
 app.Run();
 

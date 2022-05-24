@@ -34,6 +34,8 @@ namespace GenericMinimalApi.Services
             var entity = mapper.Map<TEntity>(item);
 
             await repository.Create(entity);
+
+            item.Id = entity.Id;
         }
 
 

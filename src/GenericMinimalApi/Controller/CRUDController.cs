@@ -36,7 +36,8 @@ namespace GenericMinimalApi.Controller
         public virtual async Task<IActionResult> Post([FromBody] TPostITem item)
         {
             await service.Create(item, User);
-            return NoContent();
+
+            return CreatedAtAction(nameof(Get), new { id = item.Id  }, item);
         }
 
         [HttpPut("{id}")]

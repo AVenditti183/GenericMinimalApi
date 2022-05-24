@@ -9,16 +9,15 @@ namespace GenericMinimalApi.Infrastructures.Http
         where TPostITem : IEntityDto<TKey>
         where TPutItem : IEntityDto<TKey>
     {
-        public string Entity { get; private set; }
-
+        private readonly string entity;
 
         public CRUDHttpHandler(string? entity)
         {
-            Entity = string.IsNullOrEmpty(entity) ? typeof(TEntity).Name : entity;
+            this.entity = string.IsNullOrEmpty(entity) ? typeof(TEntity).Name : entity;
         }
 
         public RouteHandlerBuilder Get(IEndpointRouteBuilder app)
-            => app.MapGet($"/api/{Entity}/{{id}}",
+            => app.MapGet($"/api/{entity}/{{id}}",
                     async (
                             TKey id,
                             ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service,
@@ -33,10 +32,10 @@ namespace GenericMinimalApi.Infrastructures.Http
                     })
                 .Produces<TGetItem>()
                 .Produces(StatusCodes.Status404NotFound)
-                .WithGroupName(Entity);
+                .WithGroupName(entity);
 
         public RouteHandlerBuilder Search(IEndpointRouteBuilder app, Func<string, Expression<Func<TEntity, bool>>> textFilterFunc)
-        => app.MapGet($"/api/{Entity}",
+        => app.MapGet($"/api/{entity}",
                 async (
                     string? textFilter,
                     string? orderBy,
@@ -49,10 +48,10 @@ namespace GenericMinimalApi.Infrastructures.Http
                     => Results.Ok(await service.Search(new SearchParameters(textFilter, orderBy, orderDirection, page, pageSize), textFilterFunc, context.User))
             )
             .Produces<Page<TListItem>>()
-            .WithGroupName(Entity);
+            .WithGroupName(entity);
 
         public RouteHandlerBuilder Post(IEndpointRouteBuilder app)
-        => app.MapPost($"/api/{Entity}",
+        => app.MapPost($"/api/{entity}",
                 async (
                     TPostITem item,
                     ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service,
@@ -62,25 +61,20 @@ namespace GenericMinimalApi.Infrastructures.Http
                     var (isValid, errors) = ValidationModel.Validate(item);
                     if (!isValid)
                         return Results.ValidationProblem(errors);
-                    try
-                    {
-                        await service.Create(item, context.User);
-                        return Results.NoContent();
-                    }
-                    catch (ArgumentException e)
-                    {
-                        return Results.ValidationProblem(e.Map());
-                    }
+                        
+                    await service.Create(item, context.User);
+
+                    return Results.Created($"/api/{entity}/{item.Id}",item);
                 }
             )
             .ProducesValidationProblem()
-            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status404NotFound)
             .Accepts<TPostITem>("application/json")
-            .WithGroupName(Entity);
+            .WithGroupName(entity);
 
         public RouteHandlerBuilder Put(IEndpointRouteBuilder app)
-        => app.MapPut($"/api/{Entity}/{{id}}",
+        => app.MapPut($"/api/{entity}/{{id}}",
                 async (
                     TKey id,
                     TPutItem item,
@@ -96,25 +90,19 @@ namespace GenericMinimalApi.Infrastructures.Http
                     var entity = await service.Get(id, context.User);
                     if (entity is null)
                         return Results.NotFound();
-                    try
-                    {
-                        await service.Update(item, id, context.User);
-                        return Results.NoContent();
-                    }
-                    catch (ArgumentException e)
-                    {
-                        return Results.ValidationProblem(e.Map());
-                    }
+
+                    await service.Update(item, id, context.User);
+                    return Results.NoContent();
                 }
             )
             .ProducesValidationProblem()
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
             .Accepts<TPutItem>("application/json")
-            .WithGroupName(Entity);
+            .WithGroupName(entity);
 
         public RouteHandlerBuilder Delete(IEndpointRouteBuilder app)
-        => app.MapDelete($"/api/{Entity}/{{id}}",
+        => app.MapDelete($"/api/{entity}/{{id}}",
                 async (
                     TKey id,
                     ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service,
@@ -124,19 +112,13 @@ namespace GenericMinimalApi.Infrastructures.Http
                     var entity = await service.Get(id, context.User);
                     if (entity is null)
                         return Results.NotFound();
-                    try
-                    {
-                        await service.Delete(id, context.User);
-                        return Results.NoContent();
-                    }
-                    catch (ArgumentException e)
-                    {
-                        return Results.ValidationProblem(e.Map());
-                    }
+
+                    await service.Delete(id, context.User);
+                    return Results.NoContent();
                 }
             )
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
-            .WithGroupName(Entity);
+            .WithGroupName(entity);
     }
 }
