@@ -12,7 +12,7 @@ namespace GenericMinimalApi.Http
             {
                 cfg.TextFilterFunc = (text) =>  book => book.Title.StartsWith(text) || book.Autor.StartsWith(text);
                 cfg.RequiredAutorize = true;
-                cfg.RequiredAutorizeList = false;
+                cfg.RequiredAutorizeGetById = false;
                 cfg.EnableList = false;
             });
         }
