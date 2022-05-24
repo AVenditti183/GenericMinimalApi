@@ -69,7 +69,6 @@ namespace GenericMinimalApi.Infrastructures.Http
             )
             .ProducesValidationProblem()
             .Produces(StatusCodes.Status201Created)
-            .Produces(StatusCodes.Status404NotFound)
             .Accepts<TPostITem>("application/json")
             .WithGroupName(entity);
 
