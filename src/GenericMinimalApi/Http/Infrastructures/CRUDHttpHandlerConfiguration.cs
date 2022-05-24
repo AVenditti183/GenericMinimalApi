@@ -2,7 +2,7 @@
 
 namespace GenericMinimalApi.Infrastructures.Http
 {
-    public class CRUDHttpHandlerConfiguration<TEntity>
+    public class CRUDHttpHandlerConfiguration<TEntity,TKey> where TEntity : IEntity<TKey>
     {
         public string? Entity { get; set; }
         public bool EnableList { get; set; } = true;
@@ -16,6 +16,6 @@ namespace GenericMinimalApi.Infrastructures.Http
         public bool RequiredAutorizePost { get; set; } = true;
         public bool RequiredAutorizePut { get; set; } = true;
         public bool RequiredAutorizeDelete { get; set; } = true;
-        public Func<string, Expression<Func<TEntity, bool>>> TextFilterFunc { get; set; }
+        public Func<string, Expression<Func<TEntity, bool>>>? TextFilterFunc { get; set; } = _ => null;
     }
 }

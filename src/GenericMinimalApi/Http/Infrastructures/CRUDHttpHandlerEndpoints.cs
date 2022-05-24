@@ -2,14 +2,14 @@
 {
     public static class CRUDHttpHandlerEndpoints
     {
-        public static void CRUDHttpHandlerMap<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem>(this IEndpointRouteBuilder app, Action<CRUDHttpHandlerConfiguration<TEntity>>? configure = null)
+        public static void CRUDHttpHandlerMap<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem>(this IEndpointRouteBuilder app, Action<CRUDHttpHandlerConfiguration<TEntity,TKey>>? configure = null)
             where TEntity : IEntity<TKey>
             where TListItem : IEntityDto<TKey>
             where TGetItem : IEntityDto<TKey>
             where TPostITem : IEntityDto<TKey>
             where TPutItem : IEntityDto<TKey>
         {
-            var configuration = new CRUDHttpHandlerConfiguration<TEntity>();
+            var configuration = new CRUDHttpHandlerConfiguration<TEntity,TKey>();
             configure?.Invoke(configuration);
 
             var handler = new CRUDHttpHandler<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem>(configuration.Entity);

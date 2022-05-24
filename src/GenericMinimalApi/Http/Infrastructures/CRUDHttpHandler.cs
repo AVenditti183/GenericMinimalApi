@@ -32,6 +32,7 @@ namespace GenericMinimalApi.Infrastructures.Http
                             : Results.Ok(entity);
                     })
                 .Produces<TGetItem>()
+                .Produces(StatusCodes.Status404NotFound)
                 .WithGroupName(Entity);
 
         public RouteHandlerBuilder Search(IEndpointRouteBuilder app, Func<string, Expression<Func<TEntity, bool>>> textFilterFunc)
@@ -73,6 +74,8 @@ namespace GenericMinimalApi.Infrastructures.Http
                 }
             )
             .ProducesValidationProblem()
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound)
             .Accepts<TPostITem>("application/json")
             .WithGroupName(Entity);
 
@@ -105,6 +108,8 @@ namespace GenericMinimalApi.Infrastructures.Http
                 }
             )
             .ProducesValidationProblem()
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound)
             .Accepts<TPutItem>("application/json")
             .WithGroupName(Entity);
 
@@ -130,6 +135,8 @@ namespace GenericMinimalApi.Infrastructures.Http
                     }
                 }
             )
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound)
             .WithGroupName(Entity);
     }
 }

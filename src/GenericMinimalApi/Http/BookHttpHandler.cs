@@ -11,9 +11,6 @@ namespace GenericMinimalApi.Http
             builder.CRUDHttpHandlerMap<Book,int, BookListDto, BookDto, BookDto, BookDto>( cfg =>
             {
                 cfg.TextFilterFunc = (text) =>  book => book.Title.StartsWith(text) || book.Autor.StartsWith(text);
-                cfg.RequiredAutorize = true;
-                cfg.RequiredAutorizeGetById = false;
-                cfg.EnableList = false;
             });
         }
     }
