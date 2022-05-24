@@ -8,13 +8,23 @@ using GenericMinimalApi.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.TagActionsBy(api =>
-        new string[] { api.GroupName }
+        {
+            if(api.ActionDescriptor is ControllerActionDescriptor description)
+                return new string[] { description.ControllerName };
+
+            return new string[] { api.GroupName  };
+
+        }
     );
     c.DocInclusionPredicate((name, api) => true);
 });
@@ -45,9 +55,11 @@ app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 
 app.MapGet("/", () => "Hello World!");
 
 app.MapBook();
+
 app.Run();
 
