@@ -20,12 +20,11 @@ namespace GenericMinimalApi.Infrastructures.Http
             => app.MapGet($"/api/{entity}/{{id}}",
                     async (
                             TKey id,
-                            ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service,
-                            HttpContext context
+                            ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service
                         )
                         =>
                     {
-                        var entity = await service.Get(id, context.User);
+                        var entity = await service.Get(id);
                         return entity is null
                             ? Results.NotFound()
                             : Results.Ok(entity);
@@ -42,10 +41,9 @@ namespace GenericMinimalApi.Infrastructures.Http
                     OrderDirections orderDirection,
                     int page,
                     int pageSize,
-                    ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service,
-                    HttpContext context
+                    ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service
                     )
-                    => Results.Ok(await service.Search(new SearchParameters(textFilter, orderBy, orderDirection, page, pageSize), textFilterFunc, context.User))
+                    => Results.Ok(await service.Search(new SearchParameters(textFilter, orderBy, orderDirection, page, pageSize), textFilterFunc))
             )
             .Produces<Page<TListItem>>()
             .WithGroupName(entity);
@@ -54,15 +52,14 @@ namespace GenericMinimalApi.Infrastructures.Http
         => app.MapPost($"/api/{entity}",
                 async (
                     TPostITem item,
-                    ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service,
-                    HttpContext context
+                    ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service
                 ) =>
                 {
                     var (isValid, errors) = ValidationModel.Validate(item);
                     if (!isValid)
                         return Results.ValidationProblem(errors);
                         
-                    await service.Create(item, context.User);
+                    await service.Create(item);
 
                     return Results.Created($"/api/{entity}/{item.Id}",item);
                 }
@@ -77,8 +74,7 @@ namespace GenericMinimalApi.Infrastructures.Http
                 async (
                     TKey id,
                     TPutItem item,
-                    ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service,
-                    HttpContext context
+                    ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service
                 ) =>
                 {
                     var (isValid, errors) = ValidationModel.Validate(item);
@@ -86,11 +82,11 @@ namespace GenericMinimalApi.Infrastructures.Http
                         return Results.ValidationProblem(errors);
 
 
-                    var entity = await service.Get(id, context.User);
+                    var entity = await service.Get(id);
                     if (entity is null)
                         return Results.NotFound();
 
-                    await service.Update(item, id, context.User);
+                    await service.Update(item, id);
                     return Results.NoContent();
                 }
             )
@@ -104,15 +100,14 @@ namespace GenericMinimalApi.Infrastructures.Http
         => app.MapDelete($"/api/{entity}/{{id}}",
                 async (
                     TKey id,
-                    ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service,
-                    HttpContext context
+                    ICRUDService<TEntity, TKey, TListItem, TGetItem, TPostITem, TPutItem> service
                 ) =>
                 {
-                    var entity = await service.Get(id, context.User);
+                    var entity = await service.Get(id);
                     if (entity is null)
                         return Results.NotFound();
 
-                    await service.Delete(id, context.User);
+                    await service.Delete(id);
                     return Results.NoContent();
                 }
             )

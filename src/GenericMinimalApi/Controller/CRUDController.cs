@@ -22,20 +22,20 @@ namespace GenericMinimalApi.Controller
         [HttpGet]
         public virtual async Task<IActionResult> Search([FromQuery] SearchParameters parameters)
         {
-            return Ok( await service.Search(parameters, TextFilterFunc, User));
+            return Ok( await service.Search(parameters, TextFilterFunc));
         }
 
         [HttpGet("{id}")]
         public virtual async Task<IActionResult> Get(TKey id)
         {
-            var entity = await service.Get(id,User);
+            var entity = await service.Get(id);
             return entity is null ? Ok(entity): NotFound();
         }
 
         [HttpPost]
         public virtual async Task<IActionResult> Post([FromBody] TPostITem item)
         {
-            await service.Create(item, User);
+            await service.Create(item);
 
             return CreatedAtAction(nameof(Get), new { id = item.Id  }, item);
         }
@@ -44,10 +44,10 @@ namespace GenericMinimalApi.Controller
         public virtual async Task<IActionResult> Put(TKey id, [FromBody] TPutItem item)
         {
 
-            if( (await service.Get(id,User)) is null)
+            if( (await service.Get(id)) is null)
                 return NotFound();
 
-            await service.Update(item, id, User);
+            await service.Update(item, id);
             return NoContent();
         }
 
@@ -55,10 +55,10 @@ namespace GenericMinimalApi.Controller
         public virtual async Task<IActionResult> Delete(TKey id)
         {
 
-            if ((await service.Get(id, User)) is null)
+            if ((await service.Get(id)) is null)
                 return NotFound();
 
-            await service.Delete(id, User);
+            await service.Delete(id);
             return NoContent();
         }
 

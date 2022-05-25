@@ -22,14 +22,14 @@ namespace GenericMinimalApi.Services
             this.mapper = mapper;
         }
 
-        public virtual async Task<TGetItem?> Get(TKey key, ClaimsPrincipal user)
+        public virtual async Task<TGetItem?> Get(TKey key)
         {
             var entity= await repository.Get(key);
 
             return mapper.Map<TGetItem>(entity);
         }
 
-        public virtual async Task Create(TPostITem item, ClaimsPrincipal user)
+        public virtual async Task Create(TPostITem item)
         {
             var entity = mapper.Map<TEntity>(item);
 
@@ -39,11 +39,11 @@ namespace GenericMinimalApi.Services
         }
 
 
-        public virtual Task Delete(TKey key, ClaimsPrincipal user)
+        public virtual Task Delete(TKey key)
             => repository.Delete(key);
 
         
-        public async Task Update(TPutItem item, TKey key, ClaimsPrincipal user)
+        public async Task Update(TPutItem item, TKey key)
         {
             var entity = mapper.Map<TEntity>(item);
 
@@ -54,7 +54,7 @@ namespace GenericMinimalApi.Services
         protected virtual Expression<Func<TEntity, bool>>? Filter(string? textFilter)
             => null;
 
-        public virtual async Task<Page<TListItem>> Search(SearchParameters parameters, Func<string, Expression<Func<TEntity, bool>>> textFilterFunc, ClaimsPrincipal user)
+        public virtual async Task<Page<TListItem>> Search(SearchParameters parameters, Func<string, Expression<Func<TEntity, bool>>> textFilterFunc)
         {
             var entities = await repository.GetAll();
 
